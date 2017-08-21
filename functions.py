@@ -9,10 +9,13 @@ def get_directory():
         
 def get_row():
     while True:
-        row = input("Input row number to be deleted: ")
-        if row < 1:
-            print("INVALID ROW NUMBER, MUST BE 1 OR HIGHER\N")
-        return row
+        try:
+            row = input("Input row number to be deleted: ")
+            if int(row) < 1:
+                print("INVALID ROW NUMBER, MUST BE 1 OR HIGHER\n")
+            return row
+        except:
+            print("INPUT MUST BE AN INTEGER!\n")
     
 def valid_csv(filename, row_num):
     with open(filename) as file:
@@ -20,21 +23,25 @@ def valid_csv(filename, row_num):
  
  
 
-def copy_csv(directory, file, row_num):
-    absolute_directory = os.path.abspath(directory)
-    absolute_filename  = os.path.join(absolute_directory, file)
-    os.chdir(absolute_directory)
+def copy_csv(directory, absolute_filename, row_num):
+
     with open(absolute_filename) as f:
         csv_reader = csv.reader(f)
         csv_rows   = list(csv_reader)
-        with open(_create_new_filename(file, row_num), 'w') as new_file:
-            pass
+        with open(_create_new_filename(absolute_filename.split('\\')[-1], row_num), 'w') as new_file:
+            csv_writer = csv.writer(new_file)
+            for index in len(range(csv_rows)):
+                if index + 1 != row_num:
+                    csv_writer.writerow(csv_rows[index])
  
 def delete_rows(directory, row_num):
     for dir_name, subdir_list, file_list in os.walk(directory):
         for file in file_list:
+            absolute_directory = os.path.abspath(dir_name)
+            absolute_filename  = os.path.join(absolute_directory, file)
+            os.chdir(absolute_directory)
             if valid_csv(file, row_num):
-                pass
+                copy_csv(dir_name, file, row_num)
 
 
 def _create_new_filename(filename, row_num):
