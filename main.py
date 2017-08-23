@@ -10,4 +10,6 @@ along that directory by deleting the specified row
 '''
 
 if __name__ == '__main__':
+
     functions.delete_rows(functions.get_directory(), functions.get_row())
+    
